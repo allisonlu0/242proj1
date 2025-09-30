@@ -129,6 +129,7 @@ def calculate_tf(word_matrix):
 def analyze_tf(tf_matrix):
     for doc in tf_matrix.columns:
         sorted_tf = tf_matrix[doc].sort_values(ascending=False)
+        print("\nTop 20 terms by TF")
         print(sorted_tf.head(20))
 
 def calculate_idf(word_matrix):
@@ -138,12 +139,12 @@ def calculate_idf(word_matrix):
     idf = np.log((N_D / (1 + n_t)))
     return idf
 
-def analyze_idf(idf ):
+def analyze_idf(idf):
     sorted_idf = idf.sort_values(ascending=False)
-    print(f"\nTop 20 terms by IDF (most rare)")
+    print(f"\nTop 20 terms by IDF (most rare across all)")
     print(sorted_idf.head(20))
 
-    print(f"\nBottom 20 terms by IDF (most common)")
+    print(f"\nBottom 20 terms by IDF (most common across all)")
     print(sorted_idf.tail(20))
 
 """
@@ -166,13 +167,9 @@ def analyze_tfidf(tfidf):
         # can write something in analysis/report based on this
 
 def full_analysis(word_matrix):
-    print("\nTerm Frequency (TF)")
+
     tf = calculate_tf(word_matrix)
-
-    print("\nInverse Document Frequency (IDF)")
     idf = calculate_idf(word_matrix)
-
-    print("\nTF-IDF")
     tfidf = calculate_tfidf(word_matrix)
 
     analyze_tf(tf)
