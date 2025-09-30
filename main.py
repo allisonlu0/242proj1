@@ -5,16 +5,16 @@ from collections import Counter
 import pandas as pd
 import numpy as np
 import nltk
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
 BOOK_FILES = {
-    "huckleberry_finn": "books/huckleberry_finn.txt",
-    "great_gatsby": "books/great_gatsby.txt",
-    "war_peace": "books/war_peace.txt",
-    "crime_punishment": "books/crime_and_punishment.txt"
+    "the_adventures_of_huckleberry_finn": "books/the_adventures_of_huckleberry_finn.txt",
+    "the_great_gatsby": "books/the_great_gatsby.txt",
+    "war_and_peace": "books/war_and_peace.txt",
+    "crime_and_punishment": "books/crime_and_punishment.txt"
 }
 
 def clean_book(filename):
@@ -63,7 +63,7 @@ def clean_book(filename):
 
     return text.strip()
 
-def prep_doc(doc_text, doc_name):
+def prep_doc(doc_text, doc_name='Book'):
     return [(doc_name, doc_text)]
 
 def tokenize(text):
@@ -105,12 +105,11 @@ def create_table(docs):
 
     return df
 
-def process_book(filename, doc_name=None):
-    if doc_name is None:
-        doc_name = os.path.basename(filename).replace(".txt", "")
+def process_book(filename):
+    doc_name = os.path.basename(filename).replace('.txt', '')
 
     text = clean_book(filename)
-    docs = prep_doc(text)
+    docs = prep_doc(text, doc_name=doc_name)
     df = create_table(docs)
 
     return df
@@ -118,14 +117,13 @@ def process_book(filename, doc_name=None):
 
 # Example usage
 if __name__ == "__main__":
-    filename = "books/adventures_of_huckleberry_finn.txt"  # Replace with your file path
-    output_csv = "word_document_matrix.csv"  # Optional output file
+    for book_name, file_path in BOOK_FILES.items():
+        df = process_book(file_path)
 
-    # Process the book with stopword removal and stemming
-    df = process_book(filename)
+        top_10 = df[book_name].sort_values(ascending=False).head(10)
+        print(top_10)
 
-    # Display sample of the matrix
-    print("\nmost common words:")
-    top_10 = df['Book'.sort_values(ascending=False).head(10)]
+        output_csv = f'word_matrices/{book_name}.csv'
+        df.to_csv(output_csv)
 
 
