@@ -17,6 +17,9 @@ BOOK_FILES = {
     "crime_and_punishment": "books/crime_and_punishment.txt"
 }
 
+"""
+Part 1 Parsing
+"""
 def clean_book(filename):
     with open(filename, encoding='utf-8', errors='ignore') as file:
         text = file.read()
@@ -114,16 +117,83 @@ def process_book(filename):
 
     return df
 
+"""
+Part 2 Vectorization
+"""
+def calculate_tf(word_matrix):
+    doc_total_words = word_matrix.sum(axis=0)
+    tf_matrix = word_matrix.div(doc_total_words, axis=1)
+
+    return tf_matrix
+
+def analyze_tf(tf_matrix):
+    for doc in tf_matrix.columns:
+        sorted_tf = tf_matrix[doc].sort_values(ascending=False)
+        print(sorted_tf.head(20))
+
+def calculate_idf(word_matrix):
+    N_D = len(word_matrix.columns)
+    n_t = (word_matrix > 0).sum(axis=1)
+
+    idf = np.log((N_D / (1 + n_t)))
+    return idf
+
+def analyze_idf(idf ):
+    sorted_idf = idf.sort_values(ascending=False)
+    print(f"\nTop 20 terms by IDF (most rare)")
+    print(sorted_idf.head(20))
+
+    print(f"\nBottom 20 terms by IDF (most common)")
+    print(sorted_idf.tail(20))
+
+"""
+Part 3 TF-IDF
+"""
+
+def calculate_tfidf(word_matrix):
+    tf = calculate_tf(word_matrix)
+    idf = calculate_idf(word_matrix)
+
+    tfidf = tf.mul(idf, axis=0)
+    return tfidf
+
+def analyze_tfidf(tfidf):
+    for doc in tfidf.columns:
+        sorted_tfidf = tfidf[doc].sort_values(ascending=False)
+        # high tf-idf means it's unique and rare in other docs
+        print(f"\nTop 20 terms by TF-IDF")
+        print(sorted_tfidf.head(20))
+        # can write something in analysis/report based on this
+
+def full_analysis(word_matrix):
+    print("\nTerm Frequency (TF)")
+    tf = calculate_tf(word_matrix)
+
+    print("\nInverse Document Frequency (IDF)")
+    idf = calculate_idf(word_matrix)
+
+    print("\nTF-IDF")
+    tfidf = calculate_tfidf(word_matrix)
+
+    analyze_tf(tf)
+    analyze_idf(idf)
+    analyze_tfidf(tfidf)
+
+    return {
+        "tf": tf,
+        "idf": idf,
+        "tfidf": tfidf
+    }
 
 # Example usage
 if __name__ == "__main__":
+    documents = []
     for book_name, file_path in BOOK_FILES.items():
-        df = process_book(file_path)
+        text = clean_book(file_path)
+        documents.append((book_name, text))
 
-        top_10 = df[book_name].sort_values(ascending=False).head(10)
-        print(top_10)
+    word_matrix = create_table(documents)
 
-        output_csv = f'word_matrices/{book_name}.csv'
-        df.to_csv(output_csv)
+    result = full_analysis(word_matrix)
 
 
