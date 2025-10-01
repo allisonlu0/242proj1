@@ -71,7 +71,7 @@ def prep_doc(doc_text, doc_name='Book'):
 
 def tokenize(text):
     text = text.lower()
-    text = re.sub(r"[^\w\s]+", "", text)
+    text = re.sub(r'[^a-zA-Z0-9\s]+', ' ', text)
     text = re.sub(r'\d+', '', text)
 
     tokens = text.split()
@@ -129,8 +129,8 @@ def calculate_tf(word_matrix):
 def analyze_tf(tf_matrix):
     for doc in tf_matrix.columns:
         sorted_tf = tf_matrix[doc].sort_values(ascending=False)
-        print("\nTop 20 terms by TF")
-        print(sorted_tf.head(20))
+        print("\nTop 50 terms by TF")
+        print(sorted_tf.head(50))
 
 def calculate_idf(word_matrix):
     N_D = len(word_matrix.columns)
@@ -140,12 +140,14 @@ def calculate_idf(word_matrix):
     return idf
 
 def analyze_idf(idf):
+    print("\nIDF values before sorting")
+    print(idf.head(50))
     sorted_idf = idf.sort_values(ascending=False)
-    print(f"\nTop 20 terms by IDF (most rare across all)")
-    print(sorted_idf.head(20))
+    print(f"\nTop 50 terms by IDF (most rare across all)")
+    print(sorted_idf.head(50))
 
-    print(f"\nBottom 20 terms by IDF (most common across all)")
-    print(sorted_idf.tail(20))
+    print(f"\nBottom 50 terms by IDF (most common across all)")
+    print(sorted_idf.tail(50))
 
 """
 Part 3 TF-IDF
@@ -162,8 +164,8 @@ def analyze_tfidf(tfidf):
     for doc in tfidf.columns:
         sorted_tfidf = tfidf[doc].sort_values(ascending=False)
         # high tf-idf means it's unique and rare in other docs
-        print(f"\nTop 20 terms by TF-IDF")
-        print(sorted_tfidf.head(20))
+        print(f"\nTop 50 terms by TF-IDF")
+        print(sorted_tfidf.head(50))
         # can write something in analysis/report based on this
 
 def full_analysis(word_matrix):
