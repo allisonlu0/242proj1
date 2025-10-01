@@ -140,9 +140,10 @@ def calculate_idf(word_matrix):
     return idf
 
 def analyze_idf(idf):
-    print("\nIDF values before sorting")
-    print(idf.head(50))
-    sorted_idf = idf.sort_values(ascending=False)
+    idf_count = idf.value_counts()
+    print("\nIDF values")
+    print(idf_count)
+    sorted_idf = idf.sort_values(ascending=False,kind='stable')
     print(f"\nTop 50 terms by IDF (most rare across all)")
     print(sorted_idf.head(50))
 
@@ -184,7 +185,6 @@ def full_analysis(word_matrix):
         "tfidf": tfidf
     }
 
-# Example usage
 if __name__ == "__main__":
     documents = []
     for book_name, file_path in BOOK_FILES.items():
